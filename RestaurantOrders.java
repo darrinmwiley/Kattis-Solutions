@@ -5,7 +5,7 @@ import java.math.*;
 import static java.lang.System.*;
 
 public class RestaurantOrders {
-    
+
     public void go() throws IOException {
         BufferedReader file = new BufferedReader(new InputStreamReader(System.in));
         String line;
@@ -17,7 +17,7 @@ public class RestaurantOrders {
             for(int i = 0;i<N;i++)
             {
                 ints[i] = Integer.parseInt(st.nextToken());
-            }   
+            }
             for(int i = 0;i<ints.length/2;i++)
             {
                 int save = ints[i];
@@ -64,7 +64,7 @@ public class RestaurantOrders {
             }
         }
     }
-    
+
     public static void main(String[] args) throws IOException {
         new RestaurantOrders().go();
     }
