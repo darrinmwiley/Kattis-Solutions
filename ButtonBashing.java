@@ -2,75 +2,75 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.StringTokenizer;
 
-public class Chess {
+public class ButtonBashing {
 
 	StringTokenizer st;
 	BufferedReader file;
 
+	int[][] d = new int[][] {{1,0,-1,0},{0,1,0,-1}};
+	int R,C;
+
 	public static void main(String[] args) throws Exception
 	{
-		new Chess().run();
+		new ButtonBashing().run();
 	}
-
-	String position = "HGFEDCBA";
 
 	public void run() throws Exception
 	{
-
 		//this is fast IO - faster than Scanner/System.out.println
 		file = new BufferedReader(new InputStreamReader(System.in));
 		PrintWriter pout = new PrintWriter(System.out);
 
-		int N = nextInt();
+		int zz = nextInt();
 	loop:
-		for(int x = 0;x<N;x++)
+		for(int z = 0;z<zz;z++)
 		{
-			int a = position.indexOf(next().charAt(0));
-			int b = nextInt()-1;
-			int c = position.indexOf(next().charAt(0));
-			int d = nextInt()-1;
-
-			if((a+b)%2 != (c+d)%2)
+			int N = nextInt();
+			int G = nextInt();
+			int[] fp = new int[3601];
+			int[] buttons = new int[N];
+			for(int i = 0;i<N;i++)
+				buttons[i] = nextInt();
+			Arrays.fill(fp, 3601);
+			Queue<Integer> que = new LinkedList<Integer>();
+			que.add(0);
+			que.add(0);
+			while(!que.isEmpty())
 			{
-				System.out.println("Impossible");
-			}else {
-				if(a == c && b == d)
+				int position = que.poll();
+				int cost = que.poll();
+				if(fp[position] == 3601)
 				{
-					System.out.println(0 +" "+position.charAt(a)+" "+(b+1));
-				}else if(canMove(a,b,c,d))
-				{
-					System.out.println(1 + " " + position.charAt(a)+" "+(b+1)+" "+position.charAt(c)+" "+(d+1));
-				}else {
-					for(int i = 0;i<8;i++)
+					fp[position] = cost;
+					for(int i = 0;i<N;i++)
 					{
-						for(int j = 0;j<8;j++)
-						{
-							if(canMove(a,b,i,j) && canMove(i,j,c,d))
-							{
-								System.out.println(2+" "+position.charAt(a)+" "+(b+1)+" "+position.charAt(i)+" "+(j+1)+" "+position.charAt(c)+" "+(d+1));
-								continue loop;
-							}
-						}
+						que.add(Math.max(Math.min(position + buttons[i], 3600), 0));
+						que.add(cost + 1);
 					}
 				}
 			}
+			for(int i = G;i<fp.length;i++)
+			{
+				if(fp[i] != 3601)
+				{
+					System.out.println(fp[i]+" "+(i-G));
+					continue loop;
+				}
+			}
 		}
-
-
-
-
 
 		pout.flush();
 		pout.close();
 	}
 
-	public boolean canMove(int a, int b, int c, int d)
+	boolean val(int r, int c)
 	{
-		return a-b == c-d || a+b == c+d;
+		return Math.min(r,c) >= 0 && r < R && c < C;
 	}
 
 	//don't worry about this, just a helper method

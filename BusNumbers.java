@@ -1,33 +1,25 @@
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Scanner;
 
-
 public class BusNumbers {
-
-    public static void main(String[] args)
-    {
-        Scanner file = new Scanner(System.in);
-        int N = file.nextInt();
-        ArrayList<Integer> ints = new ArrayList<Integer>();
-        for(int i = 0;i<N;i++)
-        {
-            ints.add(file.nextInt());
-        }
-        Collections.sort(ints);
-        while(!ints.isEmpty())
-        {
-            int start = ints.remove(0);
-            int next = start;
-            while(!ints.isEmpty()&&ints.get(0)-next==1)
-                next = ints.remove(0);
-            if(next==start)
-                System.out.print(start+" ");
-            else if(next-start==1)
-                System.out.print(start+" "+next+" ");
-            else
-                System.out.print(start+"-"+next+" ");
-        }
-        
-    }
+	public static final void main(final String[] arg)throws Exception {
+		final Scanner file = new Scanner(System.in);
+		boolean[] buses = new boolean[2000];
+		int n = file.nextInt();
+		while(n-->0) {
+			buses[file.nextInt()] = true;
+		}
+		Integer prev = null;
+		ArrayList<String> output = new ArrayList<String>();
+		for(int b = 0; b < buses.length; b++)
+			if(buses[b] && prev == null)
+				prev = b;
+			else if(!buses[b] && prev != null) {
+				if((b-1) - prev > 1) output.add(prev + "-" + (b-1));
+				else if((b-1) - prev == 1) output.add(prev + " " + (b-1));
+				else output.add("" + (b-1));
+				prev = null;
+			}
+		System.out.print(output.toString().replaceAll("[\\[\\],]", ""));
+	}
 }
