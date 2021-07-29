@@ -1,68 +1,56 @@
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Scanner;
 
 public class DigitSum {
-    
+
+    public static void main(String[] args)
+    {
+        new DigitSum().run();
+    }
+
     public void run()
     {
         Scanner file = new Scanner(System.in);
         int zz = file.nextInt();
         for(int z = 0;z<zz;z++)
         {
-            BigInteger a = file.nextBigInteger();
-            BigInteger b = file.nextBigInteger();
-            if(a.equals(BigInteger.ZERO))
-                System.out.println(digsum(b));
-            else
-                System.out.println(digsum(b).subtract(digsum(a.subtract(BigInteger.ONE))));
+            long a = file.nextLong();
+            long b = file.nextLong();
+            BigInteger c = digitSumDP(Math.max(a-1, 0));
+            BigInteger d = digitSumDP(b);
+            System.out.println(d.subtract(c));
         }
     }
-    
-    public BigInteger digsum(BigInteger n)
+
+    public BigInteger digitSumDP(long K)
     {
-        int len = (n+"").length();
-        BigInteger sum = BigInteger.ZERO;
-        for(int i = 0;i<len;i++)
-        {
-            sum = sum.add(new BigInteger("45").multiply(new BigInteger("10").pow(i)).multiply(new BigInteger(n+"").divide(new BigInteger("10").pow(i+1))));
-            //sum+=45*pow(10,i)*(n/pow(10,i+1));
-            int d = new BigInteger(n+"").divide(new BigInteger("10").pow(i)).mod(new BigInteger("10")).intValue();
-            //int d = n/pow(10,i)%10;
-            if(i!=0)
-                sum = sum.add(new BigInteger("10").pow(i).multiply(new BigInteger(d+"")).multiply(new BigInteger(d-1+"")).divide(new BigInteger("2")));
-                //sum+=pow(10,i)*d*(d-1)/2;
-            else
-                sum = sum.add(new BigInteger(d+"").multiply(new BigInteger(d+1+"")).divide(new BigInteger(2+"")));
-                //sum+=d*(d+1)/2;
-            if(i!=0)
-                sum = sum.add(new BigInteger(d+"").multiply(new BigInteger(n+"").mod(new BigInteger("10").pow(i)).add(BigInteger.ONE)));
-                //sum+=d*(n%pow(10,i)+1);
-        }
-        return sum;
+       String s = K+"";
+       BigInteger[][] dp = new BigInteger[s.length()][2];
+       for(int i = 0;i<dp.length;i++)
+           Arrays.fill(dp[i],BigInteger.ZERO);
+       dp[0][0] = new BigInteger("45"); // sum of all 1 digit numbers is 45
+       dp[0][1] = new BigInteger(""+((K%10+1)*(K%10)/2)); //sum of all numbers less than last digit of K, using sum of arithmetic sequence
+       for(int i = 1;i<dp.length;i++)
+       {
+          BigInteger D = new BigInteger(""+getDigit(s,i)); // i’th digit from the end of K
+          for(int j = 0;j<D.intValue();j++)
+             dp[i][1] = dp[i][1].add(new BigInteger(j+"").multiply(pow(i)).add(dp[i-1][0])); //analogous to A on slide 67
+          dp[i][1] = dp[i][1].add(D.multiply(new BigInteger(""+(Long.parseLong(s.substring(s.length()-i))+1))).add(dp[i-1][1])); //analogous to B on slide 67
+          for(int j = 0;j<10;j++)
+             dp[i][0] = dp[i][0].add(new BigInteger(j+"").multiply(pow(i)).add(dp[i-1][0])); //sum if all of the remaining digits can be anything
+       }
+       return dp[s.length()-1][1];
     }
-    
-    static int pow(int a, int b)
+
+    public BigInteger pow(int i)
     {
-        return (int)(Math.pow(a, b));
+        return BigInteger.TEN.pow(i);
     }
-    
-    public static int digsum2(int a)
+
+    public int getDigit(String s, int n)
     {
-        int sum = 0;
-        for(int i = 1;i<=a;i++)
-        {
-            int N = i;
-            while(N!=0)
-            {
-                sum+=N%10;
-                N/=10;
-            }
-        }
-        return sum;
+       return s.charAt(s.length()-1-n)-48;
     }
-    
-    public static void main(String[] args)
-    {
-        new DigitSum().run();
-    }
+
 }

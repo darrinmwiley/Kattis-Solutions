@@ -1,55 +1,52 @@
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 import java.util.Scanner;
 
-
 public class HidingPlaces {
-
-    public static void main(String[] args) throws IOException
-    {
-        Scanner file = new Scanner(System.in);      
-        String col = "abcdefgh";
-        String row = "87654321";
-        int N = file.nextInt();
-        for(int z = 0;z<N;z++)
-        {
-            int[][] d = new int[8][8];
-            for(int i = 0;i<8;i++)
-                Arrays.fill(d[i],64);
-            String next = file.next();
-            int c = col.indexOf(next.charAt(0));
-            int r = row.indexOf(next.charAt(1));
-            d[r][c] = 0;
-            d(r,c,d);
-            int max = 0;
-            for(int i = 0;i<8;i++)
-                for(int j = 0;j<8;j++)
-                    max = Math.max(max,d[i][j]);
-            System.out.print(max+" ");
-            for(int i =0 ;i<8;i++)
-                for(int j = 0;j<8;j++)
-                {
-                    if(d[i][j]==max)
-                    {
-                        System.out.print(col.charAt(j)+""+row.charAt(i)+" ");
-                    }
-                }
-            System.out.println();
-        }
-    }
-    
-    public static void d(int r, int c, int[][] d)
-    {
-        int[][] dir = new int[][]{{-2,-2,-1,-1,1,1,2,2},{-1,1,-2,2,-2,2,-1,1}};
-        for(int i = 0;i<8;i++)
-        {
-            int rr = r+dir[0][i];
-            int cc = c+dir[1][i];
-            if(Math.min(rr,cc)>=0&&Math.max(rr,cc)<8&&d[rr][cc]>d[r][c]+1)
-            {
-                d[rr][cc] = d[r][c]+1;
-                d(rr,cc,d);
-            }
-        }
-    }
+	public static final int[] M = {-2, -1, 1, 2};
+	public static final void main(final String[] args)throws Exception {
+		final Scanner file = new Scanner(System.in);
+		int n = file.nextInt();
+		while(n-->0) {
+			int[][] lmat = new int[8][8];
+			Arrays.stream(lmat).forEach(x -> Arrays.fill(x, Integer.MAX_VALUE));
+			String rpos = file.next();
+			int rs = rpos.charAt(1) - '1', cs = rpos.charAt(0) - 'a';
+			Queue<Integer> space = new LinkedList<>();
+			space.add(rs);
+			space.add(cs);
+			space.add(0);
+			while(!space.isEmpty()) {
+				int r = space.remove(), c = space.remove(), s = space.remove();
+				if(Math.min(r, c) >= 0 && Math.max(r, c) < 8 && s < lmat[r][c])
+				{
+					lmat[r][c] = s;
+					for(int dr : M)
+						for(int dc : M)
+							if(Math.abs(dr) != Math.abs(dc)) {
+								space.add(dr + r);
+								space.add(dc + c);
+								space.add(s + 1);
+							}
+				}
+			}
+			int b = 0;
+			List<String> p = new ArrayList<String>();
+			for(int r = 0; r < 8; r++)
+				for(int c = 0; c < 8; c++)
+					if(lmat[r][c] != Integer.MAX_VALUE) {
+						if(lmat[r][c] > b) {
+							b = lmat[r][c];
+							p.clear();
+						}
+						if(lmat[r][c] == b) p.add((char)('a' + c) + "" + (r+1));
+					}
+			Collections.sort(p, (x,y)->x.charAt(1)==y.charAt(1)?x.charAt(0)-y.charAt(0):y.charAt(1)-x.charAt(1));
+			System.out.printf("%d %s%n", b, p.toString().replaceAll("[\\[\\],]", ""));
+		}
+	}
 }

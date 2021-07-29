@@ -1,35 +1,50 @@
-import java.awt.Point;
+import java.util.ArrayList;
 import java.util.Scanner;
-import java.util.TreeMap;
-
 
 public class EightQueens {
-
-    public static void main(String[] args)
+    
+    public void run()
     {
         Scanner file = new Scanner(System.in);
-        Point[] pts = new Point[8];
-        int c = 0;
-        try{
-            for(int i = 0;i<8;i++)
+        ArrayList<Integer> x = new ArrayList<Integer>();
+        ArrayList<Integer> y = new ArrayList<Integer>();
+        for(int i = 0;i<8;i++)
+        {
+            char[] chars = file.next().toCharArray();
+            for(int j = 0;j<8;j++)
             {
-                String next = file.next();
-                for(int j = 0;j<next.length();j++)
-                    if(next.charAt(j)=='*')
-                        pts[c++] = new Point(i,j);
-            }
-            for(int i = 0;i<8;i++)
-                for(int j = i+1;j<8;j++)
+                if(chars[j]=='*')
                 {
-                    Point a = pts[i];
-                    Point b = pts[j];
-                    if(a.x==b.x||a.y==b.y||Math.abs(a.x-b.x)==Math.abs(a.y-b.y))
+                    x.add(i);
+                    y.add(j);
+                }
+            }
+        }
+        if(x.size()!=8)
+            System.out.println("invalid");
+        else{
+            for(int i = 0;i<x.size();i++)
+            {
+                int xpos = x.get(i);
+                int ypos = y.get(i);
+                for(int j = i+1;j<x.size();j++)
+                {
+                    int x2 = x.get(j);
+                    int y2 = y.get(j);
+                    if(xpos==x2||ypos==y2||Math.abs(xpos-x2)==Math.abs(ypos-y2))
                     {
                         System.out.println("invalid");
                         return;
                     }
-                }   
-        }catch(Exception ex){System.out.println("invalid");return;}
-        System.out.println("valid");
+                }
+            }
+            System.out.println("valid");
+        }
+        
+    }
+    
+    public static void main(String[] args)
+    {
+        new EightQueens().run();
     }
 }

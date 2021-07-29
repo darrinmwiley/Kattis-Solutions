@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 
 public class FeastForCats {
-    
+
     public void run()
     {
         Scanner file = new Scanner(System.in);
@@ -28,7 +28,7 @@ public class FeastForCats {
             {
                 Queue<Edge> refill = new LinkedList<Edge>();
                 while(true)
-                {   
+                {
                     Edge edge = que.poll();
                     if(con[edge.a]&&con[edge.b])
                         continue;
@@ -48,12 +48,12 @@ public class FeastForCats {
             System.out.println(b?"yes":"no");
         }
     }
-    
+
     public static void main(String[] args)
     {
         new FeastForCats().run();
     }
-    
+
 }
 class Edge implements Comparable<Edge>{
     public final int a,b,wt;
@@ -63,7 +63,7 @@ class Edge implements Comparable<Edge>{
         b = y;
         wt = z;
     }
-    
+
     public int compareTo(Edge e)
     {
         return wt-e.wt;
