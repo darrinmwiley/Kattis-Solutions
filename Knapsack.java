@@ -1,58 +1,69 @@
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Scanner;
-import java.util.Stack;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.StringTokenizer;
 
-public class Knapsack {
+class Knapsack
+{
 	
-	public void run() throws IOException
+	public static void main (String[] args) throws java.lang.Exception
+	{
+		new Knapsack().solve();
+	}
+	
+	ArrayList<Integer> primes = new ArrayList<Integer>();
+	HashMap<Integer,Integer> map = new HashMap<Integer,Integer>();
+	
+	public void solve() throws Exception
 	{
 		BufferedReader file = new BufferedReader(new InputStreamReader(System.in));
 		String line;
-		while((line = file.readLine())!=null)
+		StringTokenizer st;
+		while((line = file.readLine())!= null)
 		{
-			StringTokenizer st = new StringTokenizer(line);
-			int C = (int)(Double.parseDouble(st.nextToken()));
+			st = new StringTokenizer(line);
+			int K = Integer.parseInt(st.nextToken());
 			int N = Integer.parseInt(st.nextToken());
-			int[] v = new int[N];
-			int[] w = new int[N];
+			int[] W = new int[N];
+			int[] V = new int[N];
 			for(int i = 0;i<N;i++)
 			{
 				st = new StringTokenizer(file.readLine());
-				v[i] = Integer.parseInt(st.nextToken());
-				w[i] = Integer.parseInt(st.nextToken());
+				V[i] = Integer.parseInt(st.nextToken());
+				W[i] = Integer.parseInt(st.nextToken());
 			}
-			int[][] dp = new int[N+1][C+1];
+			int[][] dp = new int[N+1][K+1];
 			for(int i = 1;i<dp.length;i++)
+			{
 				for(int j = 1;j<dp[i].length;j++)
 				{
 					dp[i][j] = dp[i-1][j];
-					if(j>=w[i-1])
-						dp[i][j] = Math.max(dp[i][j],dp[i-1][j-w[i-1]]+v[i-1]);
+					if(j >= W[i-1])
+						dp[i][j] = Math.max(dp[i][j], dp[i-1][j-W[i-1]] + V[i-1]);
 				}
-			int r = N;
-	        int c = C;
-	        Stack<Integer> s = new Stack<Integer>(); 
-	        while(r!=0)
-	        {
-	            if(c>=w[r-1]&&dp[r][c]-dp[r-1][c-w[r-1]]==v[r-1])
-	            {
-	                s.add(r-1);
-	                c-=w[r-1];
-	            }
-	            r--;
-	        }
-	        System.out.println(s.size());
-	        while(!s.isEmpty())
-	        	System.out.print(s.pop()+" ");
+			}
+			
+			int r = dp.length-1;
+			int c = dp[r].length-1;
+			ArrayList<Integer> list = new ArrayList<Integer>();
+			while(r != 0)
+			{
+				if(dp[r][c] != dp[r-1][c])
+				{
+					c -= W[r-1];
+					list.add(r-1);
+				}
+				r--;
+			}
+			System.out.println(list.size());
+			for(int i = list.size() - 1;i>=0;i--) {
+				System.out.print(list.get(i));
+				if(i != 0)
+					System.out.print(" ");
+			}
+			System.out.println();
 		}
 	}
-	
-	public static void main(String[] args) throws IOException
-	{
-		new Knapsack().run();
-	}
 }
-
